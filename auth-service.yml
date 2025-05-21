@@ -28,14 +28,14 @@ spring:
       client:
         registration:
           google:
-            client-id: your-google-client-id
-            client-secret: your-google-client-secret
+            client-id: 693221117307-ren5thjbfi1t7n9llu5bcobh29a2c78b.apps.googleusercontent.com
+            client-secret: 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
             scope:
               - email
               - profile
           facebook:
-            client-id: your-facebook-client-id
-            client-secret: your-facebook-client-secret
+            client-id: 1222918276095862
+            client-secret: 809b23b99e263c3174a946397c7783e4
             scope:
               - email
               - public_profile
@@ -47,6 +47,6 @@ eureka:
 
 app:
   jwt:
-    secret: mySecretKeyForJwtShouldBeVeryLongAndSecureInProduction
+    secret: Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}
     accessTokenExpirationMs: 3600000
     refreshTokenExpirationMs: 86400000
