@@ -1,62 +1,52 @@
+server:
+  port: 8081
+
 spring:
+  application:
+    name: auth-service
+
+  config:
+    import: optional:configserver:http://localhost:8888
+
   datasource:
-    url: jdbc:postgresql://postgres:5432/authdb
+    url: jdbc:postgresql://localhost:5432/auth_db
     username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
+        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-  cloud:
-    config:
-      name: auth-service
-      discovery:
-        enabled: false
-
-jwt:
-  secret: ${JWT_SECRET:my-very-secret-key}
-  expiration: 86400000 # 24h en ms
-
-logging:
-  level:
-    root: INFO
-    com.enaya.auth: DEBUG
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
-
-security:
+  security:
     oauth2:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+            client-id: your-google-client-id
+            client-secret: your-google-client-secret
             scope:
               - email
               - profile
           facebook:
-            client-id: ${FACEBOOK_CLIENT_ID}
-            client-secret: ${FACEBOOK_CLIENT_SECRET}
-            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+            client-id: your-facebook-client-id
+            client-secret: your-facebook-client-secret
             scope:
               - email
               - public_profile
 
-kafka:
-  bootstrap-servers: localhost:9092
-  producer:
-    key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-  consumer:
-    group-id: auth-group
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
+app:
+  jwt:
+    secret: mySecretKeyForJwtShouldBeVeryLongAndSecureInProduction
+    accessTokenExpirationMs: 3600000
+    refreshTokenExpirationMs: 86400000
