@@ -2,11 +2,27 @@ server:
   port: 8081
 
 spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    clean-disabled: true
   application:
     name: auth-service
 
+  profiles:
+    active: local
+
   config:
     import: optional:configserver:http://localhost:8888
+
+---
+# Profil Local (développement)
+spring:
+  config:
+    activate:
+      on-profile: local
 
   datasource:
     url: jdbc:postgresql://localhost:5432/auth_db
@@ -16,7 +32,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate  # Utiliser Flyway
     show-sql: true
     properties:
       hibernate:
@@ -28,31 +44,73 @@ spring:
       client:
         registration:
           google:
-            client-id: 693221117307-ren5thjbfi1t7n9llu5bcobh29a2c78b.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${GOOGLE_CLIENT_ID:693221117307-ren5thjbfi1t7n9llu5bcobh29a2c78b.apps.googleusercontent.com}
+            client-secret: ${GOOGLE_CLIENT_SECRET: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}
             scope:
               - email
               - profile
           facebook:
-            client-id: 1222918276095862
-            client-secret: 809b23b99e263c3174a946397c7783e4
+            client-id: ${FACEBOOK_CLIENT_ID:1222918276095862}
+            client-secret: ${FACEBOOK_CLIENT_SECRET:809b23b99e263c3174a946397c7783e4}
             scope:
               - email
               - public_profile
 
 eureka:
   client:
+    enabled: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
 
 app:
   jwt:
-    secret: Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}
-    accessTokenExpirationMs: 3600000
-    refreshTokenExpirationMs: 86400000
+    secret: ${JWT_SECRET:Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}}
+    accessTokenExpirationMs: ${JWT_ACCESS_TOKEN_EXPIRATION:3600000}
+    refreshTokenExpirationMs: ${JWT_REFRESH_TOKEN_EXPIRATION:86400000}
 
   kafka:
     bootstrap-servers: localhost:9092
+    producer:
+      retries: 3
+      batch-size: 16384
+      buffer-memory: 33554432
+      properties:
+        spring.json.trusted.packages: "com.enaya.service.auth.domain.events"
+
+---
+# Profil Kubernetes (production)
+spring:
+  config:
+    activate:
+      on-profile: kubernetes
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Flyway gère la DB
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+eureka:
+  client:
+    enabled: false  # Désactivé dans K8s
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    accessTokenExpirationMs: ${JWT_ACCESS_TOKEN_EXPIRATION:3600000}
+    refreshTokenExpirationMs: ${JWT_REFRESH_TOKEN_EXPIRATION:86400000}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
     producer:
       retries: 3
       batch-size: 16384
