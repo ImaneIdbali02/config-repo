@@ -15,6 +15,11 @@ spring:
     active: local
 
 
+  devtools:
+    restart:
+      enabled: true
+  jmx:
+    enabled: false
 
 ---
 # Profil Local (développement)
