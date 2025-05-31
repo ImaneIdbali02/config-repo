@@ -14,8 +14,7 @@ spring:
   profiles:
     active: local
 
-  config:
-    import: optional:config-service:http://localhost:8888
+
 
 ---
 # Profil Local (développement)
