@@ -1,0 +1,178 @@
+# Database Configuration
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/product_db
+    username: postgres
+    password: 0000
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    schemas: public
+    table: flyway_schema_history
+    validate-on-migrate: true
+    out-of-order: false
+    placeholder-replacement: false
+
+# Server Configuration
+server:
+  port: 8082
+  servlet:
+    context-path: /api/v1
+
+# AWS S3 Configuration
+aws:
+  s3:
+    access-key: AKIAVWRAY3KFGDXYO2SN
+    secret-key: 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
+    region: north-1
+    bucket: enaya
+    endpoint: https://s3.amazonaws.com
+
+# Kafka Configuration
+  kafka:
+    bootstrap-servers: localhost:9093
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: product-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+# Elasticsearch Configuration
+elasticsearch:
+  index:
+    prefix: product_
+  search:
+    max-results: 100
+    default-page-size: 20
+
+# Image Processing Configuration
+image:
+  processing:
+    max-file-size: 10MB
+    allowed-formats:
+      - jpg
+      - jpeg
+      - png
+      - gif
+      - webp
+      - svg
+    thumbnail:
+      width: 200
+      height: 200
+    preview:
+      width: 800
+      height: 800
+    quality: 0.8
+    compression:
+      enabled: true
+      level: 0.7
+
+# Product Service Specific Configuration
+product:
+  service:
+    cache:
+      enabled: true
+      ttl: 3600
+    validation:
+      max-variants: 50
+      max-attributes: 20
+      max-images: 10
+    search:
+      min-query-length: 2
+      max-results: 100
+    pricing:
+      default-currency: MAD
+      supported-currencies:
+        - MAD
+        - USD
+        - EUR
+    inventory:
+      low-stock-threshold: 5
+      out-of-stock-threshold: 0
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.enaya.product_service: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/product-service.log
+    max-size: 10MB
+    max-history: 30
+
+# Metrics Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+# Security Configuration
+security:
+  oauth2:
+    client:
+      registration:
+        keycloak:
+          client-id: ${KEYCLOAK_CLIENT_ID}
+          client-secret: ${KEYCLOAK_CLIENT_SECRET}
+          scope: openid,profile,email
+      provider:
+        keycloak:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+  jwt:
+    secret: ${JWT_SECRET:Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}}
+    expiration: 3600000
+
+# Resilience Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      productSearch:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 10
+        slidingWindowSize: 100
+  retry:
+    instances:
+      productSearch:
+        maxAttempts: 3
+        waitDuration: 1s
+  ratelimiter:
+    instances:
+      productSearch:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+
+# Cache Configuration
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=600s
