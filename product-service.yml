@@ -34,6 +34,27 @@ spring:
     type: caffeine
     caffeine:
       spec: maximumSize=500,expireAfterWrite=600s
+  kafka:
+    bootstrap-servers: localhost:9093
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: product-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.enaya.product_service.domain.event"
+
+# Kafka Topic Configuration
+kafka:
+  topics:
+    products: product-events
+    categories: category-events
+    collections: collection-events
+    product-events: product-events
+    stock-updates: stock-updates
 
 # AWS S3 Configuration
 aws:
@@ -43,22 +64,6 @@ aws:
     region: north-1
     bucket: enaya
     endpoint: https://s3.amazonaws.com
-
-# Kafka Configuration
-kafka:
-  bootstrap-servers: localhost:9093
-  producer:
-    key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-  consumer:
-    group-id: product-service-group
-    auto-offset-reset: earliest
-    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-    properties:
-      spring.json.trusted.packages: "com.enaya.product_service.domain.event"
-  topics:
-    stock-updates: stock-updates
 
 # Elasticsearch Configuration
 elasticsearch:
