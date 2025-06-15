@@ -30,6 +30,10 @@ spring:
     uris: http://localhost:9200
     username: elastic
     password: pbIM1uTwqFm=Igi7btdc
+    connection-timeout: 1s
+    socket-timeout: 30s
+    ssl:
+      verification-mode: none
   cache:
     type: caffeine
     caffeine:
@@ -80,6 +84,13 @@ elasticsearch:
   search:
     max-results: 100
     default-page-size: 20
+  client:
+    username: elastic
+    password: pbIM1uTwqFm=Igi7btdc
+    connection-timeout: 1s
+    socket-timeout: 30s
+    ssl:
+      verification-mode: none
 
 # Image Processing Configuration
 image:
