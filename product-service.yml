@@ -5,7 +5,7 @@ server:
 # Database Configuration
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/product_db
+    url: jdbc:postgresql://localhost:5432/product_db
     username: postgres
     password: 0000
     driver-class-name: org.postgresql.Driver
@@ -26,6 +26,10 @@ spring:
     validate-on-migrate: true
     out-of-order: false
     placeholder-replacement: false
+  elasticsearch:
+    uris: http://localhost:9200
+    username: elastic
+    password: pbIM1uTwqFm=Igi7btdc
 
 # AWS S3 Configuration
 aws:
