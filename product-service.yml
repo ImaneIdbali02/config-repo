@@ -4,6 +4,8 @@ server:
 
 # Database Configuration
 spring:
+  application:
+    name: product-service
   datasource:
     url: jdbc:postgresql://localhost:5432/product_db
     username: postgres
@@ -38,21 +40,22 @@ spring:
     type: caffeine
     caffeine:
       spec: maximumSize=500,expireAfterWrite=600s
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: product-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.json.trusted.packages: com.enaya.product_service.infrastructure.messaging.dto
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
-# Kafka Configuration
+# Kafka Topics Configuration
 kafka:
-  bootstrap-servers: localhost:9092
-  consumer:
-    group-id: product-service-group
-    auto-offset-reset: earliest
-    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-    properties:
-      spring.json.trusted.packages: com.enaya.product_service.infrastructure.messaging.dto
-  producer:
-    key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
   topics:
     products: product-events
     categories: category-events
@@ -60,6 +63,7 @@ kafka:
     stock-updates: stock-updates
     product-events: product-events
 
+# Outbox Pattern Configuration
 outbox:
   batch-size: 100
   max-retries: 3
