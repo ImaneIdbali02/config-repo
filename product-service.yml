@@ -47,7 +47,7 @@ spring:
       properties:
         spring.json.trusted.packages: "com.enaya.product_service.domain.event"
 
-# Kafka Topic Configuration
+# Kafka Configuration
 kafka:
   topics:
     products: product-events
@@ -55,6 +55,14 @@ kafka:
     collections: collection-events
     product-events: product-events
     stock-updates: stock-updates
+  consumer:
+    group-id: product-service-group
+  outbox:
+    batch-size: 100
+    max-retries: 3
+    processor:
+      delay: 1000
+      retry-delay: 5000
 
 # AWS S3 Configuration
 aws:
