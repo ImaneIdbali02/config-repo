@@ -126,3 +126,7 @@ app:
       buffer-memory: 33554432
       properties:
         spring.json.trusted.packages: "com.enaya.service.auth.domain.events"
+
+  logging:
+    level:
+      org.springframework.security: DEBUG
