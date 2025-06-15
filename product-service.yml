@@ -30,6 +30,10 @@ spring:
     uris: http://localhost:9200
     username: elastic
     password: pbIM1uTwqFm=Igi7btdc
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=600s
 
 # AWS S3 Configuration
 aws:
@@ -176,9 +180,3 @@ resilience4j:
         limitForPeriod: 100
         limitRefreshPeriod: 1s
         timeoutDuration: 0s
-
-# Cache Configuration
-  cache:
-    type: caffeine
-    caffeine:
-      spec: maximumSize=500,expireAfterWrite=600s
