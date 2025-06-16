@@ -130,6 +130,6 @@ product:
 
 app:
   jwt:
-    secret: Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}}
+    secret: Eou_yVfa0eRo1hpoWR7qk510sEB3s5Ph-UhR_81O03ugfB2yttLz9Li6dDocM88g7dGad9JYmvtw8k7-lrOPCA==
     accessTokenExpirationMs: 3600000 # 1 hour
     refreshTokenExpirationMs: 86400000 # 24 hours
