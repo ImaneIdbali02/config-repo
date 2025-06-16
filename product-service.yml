@@ -130,6 +130,6 @@ product:
 
 app:
   jwt:
-    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    secret: Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}
     accessTokenExpirationMs: 3600000 # 1 hour
     refreshTokenExpirationMs: 86400000 # 24 hours
