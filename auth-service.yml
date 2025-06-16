@@ -73,7 +73,7 @@ eureka:
 
 app:
   jwt:
-    secret: Eou_yVfa0eRo1hpoWR7qk510sEB3s5Ph-UhR_81O03ugfB2yttLz9Li6dDocM88g7dGad9JYmvtw8k7-lrOPCA==
+    secret: Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}
     accessTokenExpirationMs: 3600000
     refreshTokenExpirationMs: 86400000
 
@@ -114,9 +114,9 @@ eureka:
 
 app:
   jwt:
-    secret: ${JWT_SECRET}
-    accessTokenExpirationMs: ${JWT_ACCESS_TOKEN_EXPIRATION:3600000}
-    refreshTokenExpirationMs: ${JWT_REFRESH_TOKEN_EXPIRATION:86400000}
+    secret: Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}
+    accessTokenExpirationMs: 3600000
+    refreshTokenExpirationMs: 86400000
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
