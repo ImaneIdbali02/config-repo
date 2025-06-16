@@ -1,32 +1,47 @@
 server:
   port: 8082
 
-# Database Configuration
 spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: false
+    repair-on-migrate: true
+    clean-disabled: true
   application:
     name: product-service
+  profiles:
+    active: local
+  devtools:
+    restart:
+      enabled: true
+  jmx:
+    enabled: false
+
+---
+# Profil Local (développement)
+spring:
+  config:
+    activate:
+      on-profile: local
   datasource:
     url: jdbc:postgresql://localhost:5432/product_db
     username: postgres
     password: "0000"
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    locations: classpath:db/migration
-    schemas: public
-    table: flyway_schema_history
-    validate-on-migrate: true
-    out-of-order: false
-    placeholder-replacement: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
   elasticsearch:
     uris: http://localhost:9200
     username: elastic
@@ -53,83 +68,192 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
-# Kafka Topics Configuration
-kafka:
-  topics:
-    products: product-events
-    categories: category-events
-    collections: collection-events
-    stock-updates: stock-updates
-    product-events: product-events
-
-# Outbox Pattern Configuration
-outbox:
-  batch-size: 100
-  max-retries: 3
-  processor:
-    fixed-delay: 5000
-    retry-delay: 300000
-
-# AWS S3 Configuration
-aws:
-  s3:
-    access-key: AKIAVWRAY3KFGDXYO2SN
-    secret-key: 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
-    region: eu-north-1
-    bucket: enaya
-    endpoint: https://s3.amazonaws.com
-
-# Elasticsearch Configuration
-elasticsearch:
-  index:
-    prefix: product_
-  search:
-    max-results: 100
-    default-page-size: 20
+eureka:
   client:
-    username: elastic
-    password: pbIM1uTwqFm=Igi7btdc
-    connection-timeout: 1s
-    socket-timeout: 30s
-    ssl:
-      verification-mode: none
-
-# Image Processing Configuration
-image:
-  processing:
-    max-file-size: 10MB
-    allowed-formats:
-      - jpg
-      - jpeg
-      - png
-      - gif
-      - webp
-      - svg
-    thumbnail:
-      width: 200
-      height: 200
-    preview:
-      width: 800
-      height: 800
-    quality: 0.8
-    compression:
-      enabled: true
-      level: 0.7
-
-# Product Service Specific Configuration
-product:
-  service:
-    cache:
-      enabled: true
-      ttl: 3600
-    validation:
-      min-name-length: 3
-      max-name-length: 255
-      min-description-length: 10
-      max-description-length: 1000
+    enabled: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
 app:
   jwt:
     secret: Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}
-    accessTokenExpirationMs: 3600000 # 1 hour
-    refreshTokenExpirationMs: 86400000 # 24 hours
+    accessTokenExpirationMs: 3600000
+    refreshTokenExpirationMs: 86400000
+  kafka:
+    topics:
+      products: product-events
+      categories: category-events
+      collections: collection-events
+      stock-updates: stock-updates
+      product-events: product-events
+  outbox:
+    batch-size: 100
+    max-retries: 3
+    processor:
+      fixed-delay: 5000
+      retry-delay: 300000
+  aws:
+    s3:
+      access-key: AKIAVWRAY3KFGDXYO2SN
+      secret-key: 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
+      region: eu-north-1
+      bucket: enaya
+      endpoint: https://s3.amazonaws.com
+  elasticsearch:
+    index:
+      prefix: product_
+    search:
+      max-results: 100
+      default-page-size: 20
+    client:
+      username: elastic
+      password: pbIM1uTwqFm=Igi7btdc
+      connection-timeout: 1s
+      socket-timeout: 30s
+      ssl:
+        verification-mode: none
+  image:
+    processing:
+      max-file-size: 10MB
+      allowed-formats:
+        - jpg
+        - jpeg
+        - png
+        - gif
+        - webp
+        - svg
+      thumbnail:
+        width: 200
+        height: 200
+      preview:
+        width: 800
+        height: 800
+      quality: 0.8
+      compression:
+        enabled: true
+        level: 0.7
+  product:
+    service:
+      cache:
+        enabled: true
+        ttl: 3600
+      validation:
+        min-name-length: 3
+        max-name-length: 255
+        min-description-length: 10
+        max-description-length: 1000
+
+---
+# Profil Kubernetes (production)
+spring:
+  config:
+    activate:
+      on-profile: kubernetes
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URI}
+    username: ${ELASTICSEARCH_USERNAME}
+    password: ${ELASTICSEARCH_PASSWORD}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
+    consumer:
+      group-id: product-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.json.trusted.packages: com.enaya.product_service.infrastructure.messaging.dto
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+eureka:
+  client:
+    enabled: false
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}}
+    accessTokenExpirationMs: 3600000
+    refreshTokenExpirationMs: 86400000
+  kafka:
+    topics:
+      products: product-events
+      categories: category-events
+      collections: collection-events
+      stock-updates: stock-updates
+      product-events: product-events
+  outbox:
+    batch-size: 100
+    max-retries: 3
+    processor:
+      fixed-delay: 5000
+      retry-delay: 300000
+  aws:
+    s3:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+      region: ${AWS_REGION}
+      bucket: ${AWS_BUCKET}
+      endpoint: ${AWS_ENDPOINT}
+  elasticsearch:
+    index:
+      prefix: product_
+    search:
+      max-results: 100
+      default-page-size: 20
+    client:
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
+      connection-timeout: 1s
+      socket-timeout: 30s
+      ssl:
+        verification-mode: none
+  image:
+    processing:
+      max-file-size: 10MB
+      allowed-formats:
+        - jpg
+        - jpeg
+        - png
+        - gif
+        - webp
+        - svg
+      thumbnail:
+        width: 200
+        height: 200
+      preview:
+        width: 800
+        height: 800
+      quality: 0.8
+      compression:
+        enabled: true
+        level: 0.7
+  product:
+    service:
+      cache:
+        enabled: true
+        ttl: 3600
+      validation:
+        min-name-length: 3
+        max-name-length: 255
+        min-description-length: 10
+        max-description-length: 1000
+
+logging:
+  level:
+    com.enaya.product_service: DEBUG
+    org.springframework.security: DEBUG
