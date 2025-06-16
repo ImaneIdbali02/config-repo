@@ -130,3 +130,6 @@ app:
   logging:
     level:
       org.springframework.security: DEBUG
+    security:
+      com.enaya.product_service.config: DEBUG
+      io.jsonwebtoken: DEBUG
