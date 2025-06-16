@@ -73,7 +73,7 @@ eureka:
 
 app:
   jwt:
-    secret: Ntu0p1j??AX,{oW5lLbkR6,):$ct,3.V|?^*dg^P6eo1ddYE>Iqpv#T9Sko:Ko}
+    secret: sUOHfk58sleuzoFJB7u6wPcC7kRKfyHT/S9vv1BMJ+SCa6GRr/cVFftHMhShsWHxno/dDaQ1BGKiaItYjOn3mw==
     accessTokenExpirationMs: 3600000
     refreshTokenExpirationMs: 86400000
 
