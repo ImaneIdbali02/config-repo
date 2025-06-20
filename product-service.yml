@@ -13,7 +13,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -138,3 +138,8 @@ logging:
   level:
     com.enaya.product_service.config: DEBUG
     io.jsonwebtoken: DEBUG
+
+
+    org.hibernate: DEBUG
+    org.springframework.transaction: DEBUG
+    com.enaya.product_service: DEBUG
