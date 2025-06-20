@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    show-sql: false
+    
+logging:
+  level:
+    com.ecommerce.order: WARN
+    root: WARN
+    org.springframework.kafka: ERROR
+
