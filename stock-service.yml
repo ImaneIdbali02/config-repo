@@ -1,18 +1,10 @@
-server:
-  port: 8084
-  servlet:
-    context-path: /api/v1/stock
-
 spring:
-  application:
-    name: stock-management-service
-
-  # Configuration de la base de donn�es PostgreSQL
+  # Override database configuration for local development
   datasource:
-    url: jdbc:postgresql://localhost:5432/stock_db
-    username: postgres
-    password: 0000
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:h2:mem:stockdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
     hikari:
       connection-timeout: 20000
       minimum-idle: 5
@@ -22,16 +14,16 @@ spring:
       auto-commit: false
       pool-name: StockHikariPool
 
-  # Configuration JPA/Hibernate
+  # JPA configuration for H2
   jpa:
-    database: POSTGRESQL
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database: H2
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create-drop
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -43,101 +35,44 @@ spring:
         temp:
           use_jdbc_metadata_defaults: false
 
-  # Configuration Flyway
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
-    schemas: stock
-    baseline-on-migrate: true
-    validate-on-migrate: true
-    clean-disabled: true
+  # H2 Console
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
-  # Configuration Kafka
+  # Disable Flyway for H2 development
+  flyway:
+    enabled: false
+
+  # Disable Kafka for local development
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      acks: all
-      retries: 3
-      batch-size: 16384
-      linger-ms: 5
-      buffer-memory: 33554432
-      properties:
-        spring.json.add.type.headers: false
+    bootstrap-servers: localhost:9092
     consumer:
-      group-id: stock-management-group
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: stock-service-dev
       auto-offset-reset: earliest
-      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       properties:
-        spring.json.trusted.packages: "com.ecommerce.jewelry.stock.events"
+        spring.json.trusted.packages: "com.enaya.stock_microservice.Domain.event"
         spring.json.use.type.headers: false
 
-# Configuration Axon Framework
+# Axon configuration for local development
 axon:
   serializer:
     general: jackson
     events: jackson
     messages: jackson
-  eventhandling:
-    processors:
-      stock-events:
-        mode: tracking
-        source: eventStore
-        batch-size: 100
-        threads: 2
   axonserver:
     enabled: false
   eventstore:
     type: jpa
-  snapshot:
-    trigger-definition:
-      stock-aggregate:
-        threshold: 10
 
-# Configuration des topics Kafka
-kafka:
-  topics:
-    stock-events: stock.events
-    order-events: order.events
-    low-stock-alerts: stock.alerts.low-stock
-    stock-reserved: stock.reserved
-    stock-released: stock.released
-
-# Configuration du logging
+# Logging for development
 logging:
   level:
-    com.ecommerce.jewelry.stock: INFO
-    org.axonframework: WARN
-    org.springframework.kafka: WARN
+    com.enaya.stock_microservice: DEBUG
+    org.axonframework: INFO
+    org.springframework.kafka: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
-# Configuration Actuator
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: when-authorized
-  metrics:
-    export:
-      prometheus:
-        enabled: true
-
-# Configuration sp�cifique au domaine
-stock:
-  thresholds:
-    default-minimum-level: 5
-    default-alert-level: 10
-  reservation:
-    timeout-minutes: 30
-  replenishment:
-    auto-order-enabled: false
