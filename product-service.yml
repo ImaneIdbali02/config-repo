@@ -133,5 +133,5 @@ logging:
 
 
     org.hibernate: DEBUG
-    org.springframework.transaction: DEBUG
+    #org.springframework.transaction: DEBUG
     com.enaya.product_service: DEBUG
