@@ -9,9 +9,9 @@ spring:
 
   # Configuration de la base de donn�es PostgreSQL
   datasource:
-    url: jdbc:postgresql://localhost:5432/EnayaStockDB
+    url: jdbc:postgresql://localhost:5432/stock_db
     username: postgres
-    password: enaya2025
+    password: "0000"
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 20000
