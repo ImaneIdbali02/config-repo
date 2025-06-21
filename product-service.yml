@@ -18,15 +18,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    locations: classpath:db/migration
-    schemas: public
-    table: flyway_schema_history
-    validate-on-migrate: false
-    out-of-order: false
-    placeholder-replacement: false
+
   elasticsearch:
     uris: http://localhost:9200
     username: elastic
