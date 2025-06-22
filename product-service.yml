@@ -126,6 +126,11 @@ app:
     accessTokenExpirationMs: 3600000 # 1 hour
     refreshTokenExpirationMs: 86400000 # 24 hours
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+
 logging:
   level:
     com.enaya.product_service.config: DEBUG

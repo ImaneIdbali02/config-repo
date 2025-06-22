@@ -133,3 +133,8 @@ stock:
     timeout-minutes: 30
   replenishment:
     auto-order-enabled: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
