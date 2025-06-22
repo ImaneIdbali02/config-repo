@@ -30,7 +30,7 @@ spring:
       on-profile: local
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/auth_db
+    url: jdbc:postgresql://postgres-auth:5432/auth_db
     username: postgres
     password: "0000"
     driver-class-name: org.postgresql.Driver
