@@ -64,11 +64,12 @@ eureka:
     service-url:
       defaultZone: http://eureka-server:8761/eureka/
 
-app:
+
   jwt:
     secret: sUOHfk58sleuzoFJB7u6wPcC7kRKfyHT/S9vv1BMJ+SCa6GRr/cVFftHMhShsWHxno/dDaQ1BGKiaItYjOn3mw==
     accessTokenExpirationMs: 3600000
     refreshTokenExpirationMs: 86400000
+
 
   kafka:
     bootstrap-servers: kafka:9092
