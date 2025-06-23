@@ -8,26 +8,81 @@ spring:
   profiles:
     active: local
 
-
   devtools:
     restart:
       enabled: true
   jmx:
     enabled: false
 
+# --- PROFIL DOCKER ---
 ---
 spring:
   config:
     activate:
       on-profile: docker
 
+  datasource:
+    url: jdbc:postgresql://postgres-auth:5432/auth_db
+    username: postgres
+    password: "0000"
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+    sql:
+      init:
+        mode: always
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:...}
+            client-secret: ${GOOGLE_CLIENT_SECRET:...}
+            scope:
+              - email
+              - profile
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID:...}
+            client-secret: ${FACEBOOK_CLIENT_SECRET:...}
+            scope:
+              - email
+              - public_profile
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+
 app:
   jwt:
     secret: sUOHfk58sleuzoFJB7u6wPcC7kRKfyHT/S9vv1BMJ+SCa6GRr/cVFftHMhShsWHxno/dDaQ1BGKiaItYjOn3mw==
     accessTokenExpirationMs: 3600000
     refreshTokenExpirationMs: 86400000
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      retries: 3
+      batch-size: 16384
+      buffer-memory: 33554432
+      properties:
+        spring.json.trusted.packages: "com.enaya.service.auth.domain.events"
+
+# --- PROFIL LOCAL ---
 ---
-# Profil Local (développement)
 spring:
   config:
     activate:
@@ -59,14 +114,14 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID:693221117307-ren5thjbfi1t7n9llu5bcobh29a2c78b.apps.googleusercontent.com}
-            client-secret: ${GOOGLE_CLIENT_SECRET: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}
+            client-id: ${GOOGLE_CLIENT_ID:...}
+            client-secret: ${GOOGLE_CLIENT_SECRET:...}
             scope:
               - email
               - profile
           facebook:
-            client-id: ${FACEBOOK_CLIENT_ID:1222918276095862}
-            client-secret: ${FACEBOOK_CLIENT_SECRET:809b23b99e263c3174a946397c7783e4}
+            client-id: ${FACEBOOK_CLIENT_ID:...}
+            client-secret: ${FACEBOOK_CLIENT_SECRET:...}
             scope:
               - email
               - public_profile
@@ -92,6 +147,3 @@ app:
       buffer-memory: 33554432
       properties:
         spring.json.trusted.packages: "com.enaya.service.auth.domain.events"
-
-
-
