@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service-route
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+        - id: product-service-route
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**, /api/categories/**
+        - id: stock-service-route
+          uri: lb://stock-service
+          predicates:
+            - Path=/api/v1/stock/**
+        # Ajoute ici d'autres routes si besoin
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
