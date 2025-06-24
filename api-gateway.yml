@@ -20,7 +20,11 @@ spring:
           uri: lb://stock-service
           predicates:
             - Path=/api/v1/stock/**
-        # Ajoute ici d'autres routes si besoin
+        - id: order-service-route
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**, Path=/api/admin/orders/**
+
 
 eureka:
   client:
