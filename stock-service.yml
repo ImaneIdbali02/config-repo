@@ -8,8 +8,8 @@ spring:
   # Configuration de la base de donn�es PostgreSQL
   datasource:
     url: jdbc:postgresql://postgres-stock:5432/stock_db
-    username: postgres
-    password: "0000"
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 20000
