@@ -8,8 +8,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://postgres-product:5432/order_db
-    username: postgres
-    password: "0000"
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:

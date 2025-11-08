@@ -7,8 +7,8 @@ spring:
     name: product-service
   datasource:
     url: jdbc:postgresql://postgres-product:5432/product_db
-    username: postgres
-    password: "0000"
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -21,8 +21,8 @@ spring:
 
   elasticsearch:
     uris: http://localhost:9200
-    username: elastic
-    password: pbIM1uTwqFm=Igi7btdc
+    username: ${ELASTIC_USERNAME}
+    password: ${ELASTIC_PASSWORD}
     connection-timeout: 1s
     socket-timeout: 30s
     ssl:
@@ -79,8 +79,8 @@ elasticsearch:
     max-results: 100
     default-page-size: 20
   client:
-    username: elastic
-    password: pbIM1uTwqFm=Igi7btdc
+    username: ${ELASTIC_USERNAME}
+    password: ${ELASTIC_PASSWORD}
     connection-timeout: 1s
     socket-timeout: 30s
     ssl:
@@ -122,7 +122,7 @@ product:
 
 app:
   jwt:
-    secret: sUOHfk58sleuzoFJB7u6wPcC7kRKfyHT/S9vv1BMJ+SCa6GRr/cVFftHMhShsWHxno/dDaQ1BGKiaItYjOn3mw==
+    secret: ${JWT_SECRET}
     accessTokenExpirationMs: 3600000 # 1 hour
     refreshTokenExpirationMs: 86400000 # 24 hours
 

@@ -23,8 +23,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://postgres-auth:5432/auth_db
-    username: postgres
-    password: "0000"
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD:0000}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -47,14 +47,14 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID:693221117307-ren5thjbfi1t7n9llu5bcobh29a2c78b.apps.googleusercontent.com}
-            client-secret: ${GOOGLE_CLIENT_SECRET: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}
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope:
               - email
               - profile
           facebook:
-            client-id: ${FACEBOOK_CLIENT_ID:1222918276095862}
-            client-secret: ${FACEBOOK_CLIENT_SECRET:809b23b99e263c3174a946397c7783e4}
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
             scope:
               - email
               - public_profile
@@ -71,7 +71,7 @@ spring:
         spring.json.trusted.packages: "com.enaya.service.auth.domain.events"
 app:
   jwt:
-    secret: sUOHfk58sleuzoFJB7u6wPcC7kRKfyHT/S9vv1BMJ+SCa6GRr/cVFftHMhShsWHxno/dDaQ1BGKiaItYjOn3mw==
+    secret: ${JWT_SECRET}
     accessTokenExpirationMs: 3600000
     refreshTokenExpirationMs: 86400000
 
