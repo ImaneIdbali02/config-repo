@@ -65,8 +65,8 @@ outbox:
 # AWS S3 Configuration
 aws:
   s3:
-    access-key: AKIAVWRAY3KFGDXYO2SN
-    secret-key: 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
+    access-key: ${ACCESS_KEY}
+    secret-key: ${SECRET_KEY}  
     region: eu-north-1
     bucket: enaya
     endpoint: https://s3.amazonaws.com
